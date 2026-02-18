@@ -3,164 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LC_RECALL // BENTO</title>
+    <title>Recall.Sys // Direct Link Edition</title>
     <style>
         :root {
-            --bg: #f5f5f2;
+            --bg: #f8f9fa;
             --text: #2d3436;
-            --border: #2d3436;
-            --accent-sage: #b2bdab;
-            --accent-slate: #d1d8e0;
-            --accent-rose: #e9d1d1;
-            --star-gold: #f1c40f;
-            --card-bg: #ffffff;
+            --border: #1e1e1e;
+            --accent-sage: #c3cfbb;
+            --accent-blue: #d1dce5;
+            --accent-gold: #fef5d1;
+            --card: #ffffff;
+            --link: #0984e3;
         }
 
         body {
             background-color: var(--bg);
             color: var(--text);
             font-family: 'Segoe UI', system-ui, sans-serif;
-            padding: 40px 20px;
             margin: 0;
+            padding: 40px 20px;
         }
 
-        .container { max-width: 900px; margin: auto; }
+        .container { max-width: 1100px; margin: auto; }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--accent-blue);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 4px 4px 0px var(--border);
+        }
 
         .bento-grid {
             display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            grid-template-rows: auto auto;
+            grid-template-columns: 1fr 1.2fr;
             gap: 24px;
+            align-items: start;
         }
 
         .block {
-            background: var(--card-bg);
+            background: var(--card);
             border: 2px solid var(--border);
             border-radius: 16px;
             padding: 24px;
             box-shadow: 4px 4px 0px var(--border);
         }
 
-        .header-block { grid-column: span 2; display: flex; justify-content: space-between; align-items: center; background: var(--accent-slate); }
-        .input-block { grid-column: span 2; }
-        
-        h2 { margin: 0 0 20px 0; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; }
-        
-        .input-group { display: flex; gap: 12px; flex-wrap: wrap; }
+        .full-width { grid-column: span 2; }
+
+        h2 { 
+            margin: 0 0 20px 0; 
+            font-size: 0.85rem; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            opacity: 0.6;
+        }
+
+        .input-group { display: flex; gap: 10px; flex-wrap: wrap; }
         input, select {
             padding: 12px;
             border: 2px solid var(--border);
             border-radius: 8px;
-            font-size: 14px;
             outline: none;
+            font-size: 14px;
         }
 
         .btn {
-            padding: 10px 20px;
+            padding: 10px 18px;
             border: 2px solid var(--border);
             border-radius: 8px;
-            background: var(--card-bg);
-            cursor: pointer;
             font-weight: 700;
-            transition: all 0.1s;
+            cursor: pointer;
+            transition: 0.1s;
         }
-
         .btn:hover { transform: translate(-2px, -2px); box-shadow: 2px 2px 0px var(--border); }
-        .btn:active { transform: translate(0, 0); box-shadow: 0px 0px 0px var(--border); }
-        .btn-primary { background: var(--accent-sage); }
+        .btn-add { background: var(--accent-sage); }
         .btn-done { background: var(--accent-sage); width: 100%; }
-        .btn-undo { background: var(--accent-slate); width: 100%; }
-        .btn-del { border: none; background: transparent; color: #a55; font-size: 18px; padding: 0 5px; }
+        .btn-undo { background: var(--text); color: white; width: 100%; }
+        .btn-del { border: none; background: transparent; color: #d63031; font-size: 1.2rem; cursor: pointer; }
 
         .item-card {
-            background: var(--card-bg);
             border: 2px solid var(--border);
             border-radius: 12px;
             padding: 16px;
-            margin-bottom: 16px;
+            margin-bottom: 15px;
+            background: white;
             position: relative;
         }
 
-        .star { cursor: pointer; font-size: 1.4rem; color: #ddd; transition: 0.2s; }
-        .star.active { color: var(--star-gold); }
+        .q-link {
+            display: inline-block;
+            font-weight: 700;
+            margin: 10px 0;
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: 2px solid var(--accent-blue);
+            transition: color 0.2s;
+        }
+        .q-link:hover { color: var(--link); border-bottom-color: var(--link); }
+
+        .date-badge {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 6px 12px;
+            background: var(--accent-gold);
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-family: monospace;
+            font-weight: 800;
+            font-size: 12px;
+            box-shadow: 2px 2px 0px var(--border);
+        }
 
         .tag {
             font-size: 10px;
             font-weight: 800;
-            padding: 2px 8px;
+            padding: 3px 8px;
             border-radius: 4px;
             border: 1px solid var(--border);
             text-transform: uppercase;
         }
-        .tag-Easy { background: #e3f9e5; }
-        .tag-Medium { background: #fff4e5; }
-        .tag-Hard { background: #ffe3e3; }
+        .tag-Easy { background: #e8f5e9; }
+        .tag-Medium { background: #fff3e0; }
+        .tag-Hard { background: #ffebee; }
 
-        .flex-between { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .star { cursor: pointer; font-size: 1.3rem; color: #ddd; }
+        .star.active { color: #f1c40f; }
+
+        .flex { display: flex; justify-content: space-between; align-items: center; }
+
+        @media (max-width: 768px) { .bento-grid { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="bento-grid">
-        <div class="block header-block">
-            <h1 style="margin:0; font-size: 1.4rem;">Recall Tracker</h1>
-            <div id="stats" style="font-family: monospace; font-weight: bold;"></div>
-        </div>
+    <header>
+        <h1 style="margin:0; font-size: 1.2rem;">RECALL.SYS</h1>
+        <div id="stats" style="font-family: monospace; font-weight: bold;">[ QUEUE: 0 ]</div>
+    </header>
 
-        <div class="block input-block">
-            <h2>Add New Question</h2>
+    <div class="bento-grid">
+        <div class="block full-width">
+            <h2>+ New Problem Entry</h2>
             <div class="input-group">
                 <input type="text" id="qName" placeholder="Problem title..." style="flex-grow: 1;">
+                <input type="text" id="qUrl" placeholder="Paste LeetCode URL here..." style="flex-grow: 1.5;">
                 <select id="qDiff">
                     <option value="Easy">Easy</option>
                     <option value="Medium" selected>Medium</option>
                     <option value="Hard">Hard</option>
                 </select>
-                <button class="btn btn-primary" onclick="addQuestion()">Add to Grid</button>
+                <button class="btn btn-add" onclick="addQuestion()">Log Solve</button>
             </div>
         </div>
 
-        <div class="block">
-            <h2>Today's Focus</h2>
+        <div class="block" style="border-color: #39ff14; box-shadow: 4px 4px 0px #39ff14;">
+            <h2 style="color: #2d3436; opacity: 1;">🎯 Today's Focus</h2>
             <div id="dueList"></div>
         </div>
 
-        <div class="block" style="background: #fafafa;">
-            <h2>Full Archive</h2>
+        <div class="block">
+            <h2>📚 Master Archive</h2>
             <div id="allList"></div>
         </div>
-    </div>
-
-    <div style="margin-top: 30px; display: flex; gap: 10px; opacity: 0.6;">
-        <button class="btn" onclick="exportData()" style="font-size: 11px;">Export JSON</button>
-        <button class="btn" onclick="document.getElementById('importFile').click()" style="font-size: 11px;">Import JSON</button>
-        <input type="file" id="importFile" style="display:none" onchange="importData(event)">
     </div>
 </div>
 
 <script>
-    let questions = JSON.parse(localStorage.getItem('muted_bento_data')) || [];
-    let lastSolved = null;
+    let questions = JSON.parse(localStorage.getItem('bento_srs_data')) || [];
+    let lastActionId = null;
 
-    function save() {
-        localStorage.setItem('muted_bento_data', JSON.stringify(questions));
-        render();
-    }
+    function save() { localStorage.setItem('bento_srs_data', JSON.stringify(questions)); render(); }
 
     function addQuestion() {
-        const name = document.getElementById('qName').value;
-        const diff = document.getElementById('qDiff').value;
-        if(!name) return;
-        questions.push({ id: Date.now(), name, diff, starred: false, nextReview: new Date().toISOString(), prevReview: null });
-        document.getElementById('qName').value = '';
-        save();
+        const name = document.getElementById('qName');
+        const url = document.getElementById('qUrl');
+        if (!name.value) return;
+        
+        questions.push({
+            id: Date.now(),
+            name: name.value,
+            url: url.value || "#",
+            diff: document.getElementById('qDiff').value,
+            starred: false,
+            nextReview: new Date().toISOString(),
+            prevReview: null
+        });
+        
+        name.value = ''; url.value = ''; save();
     }
 
     function toggleStar(id) {
         const q = questions.find(q => q.id === id);
-        q.starred = !q.starred;
-        save();
+        q.starred = !q.starred; save();
     }
 
     function markDone(id) {
@@ -170,63 +210,68 @@
         const next = new Date();
         next.setDate(next.getDate() + (intervals[q.diff] || 1));
         q.nextReview = next.toISOString();
-        lastSolved = id;
-        save();
+        lastActionId = id; save();
     }
 
     function undo(id) {
         const q = questions.find(q => q.id === id);
-        if(q.prevReview) { q.nextReview = q.prevReview; q.prevReview = null; lastSolved = null; save(); }
+        if (q.prevReview) {
+            q.nextReview = q.prevReview;
+            q.prevReview = null;
+            lastActionId = null; save();
+        }
     }
 
     function deleteQ(id) {
-        if(confirm('Remove this entry?')) { questions = questions.filter(q => q.id !== id); save(); }
+        if (confirm("Delete this problem?")) {
+            questions = questions.filter(q => q.id !== id); save();
+        }
     }
 
     function render() {
         const dueList = document.getElementById('dueList');
         const allList = document.getElementById('allList');
+        const todayStr = new Date().toISOString().split('T')[0];
         dueList.innerHTML = ''; allList.innerHTML = '';
-        const today = new Date().toISOString().split('T')[0];
 
         questions.forEach(q => {
-            const isDue = q.nextReview.split('T')[0] <= today || q.starred;
-            const cardHtml = `
-                <div class="item-card">
-                    <div class="flex-between">
-                        <span class="tag tag-${q.diff}">${q.diff}</span>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <span class="star ${q.starred ? 'active' : ''}" onclick="toggleStar(${q.id})">★</span>
-                            <button class="btn-del" onclick="deleteQ(${q.id})">×</button>
-                        </div>
+            const dueDate = q.nextReview.split('T')[0];
+            const isDue = dueDate <= todayStr || q.starred;
+
+            const cardContent = `
+                <div class="flex">
+                    <span class="tag tag-${q.diff}">${q.diff}</span>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span class="star ${q.starred ? 'active' : ''}" onclick="toggleStar(${q.id})">★</span>
+                        <button class="btn-del" onclick="deleteQ(${q.id})">×</button>
                     </div>
-                    <div style="font-weight:600; margin-bottom:12px; font-size: 0.95rem;">${q.name}</div>
-                    <div class="flex-between">
-                        <small style="opacity:0.5; font-size:11px;">Due: ${q.nextReview.split('T')[0]}</small>
-                        <div style="width: 80px;">
-                            ${lastSolved === q.id ? 
+                </div>
+                <a href="${q.url}" target="_blank" class="q-link">🔗 ${q.name}</a>
+            `;
+
+            if (isDue) {
+                dueList.innerHTML += `
+                    <div class="item-card">
+                        ${cardContent}
+                        <div style="margin-top:5px;">
+                            ${lastActionId === q.id ? 
                                 `<button class="btn btn-undo" onclick="undo(${q.id})">Undo</button>` : 
                                 `<button class="btn btn-done" onclick="markDone(${q.id})">Done</button>`}
                         </div>
                     </div>
+                `;
+            }
+
+            allList.innerHTML += `
+                <div class="item-card">
+                    ${cardContent}
+                    <div class="date-badge">Next Practice: ${dueDate}</div>
                 </div>
             `;
-            if(isDue) dueList.innerHTML += cardHtml;
-            allList.innerHTML += cardHtml;
         });
-        document.getElementById('stats').innerText = `Total: ${questions.length}`;
-        if(dueList.innerHTML === '') dueList.innerHTML = '<p style="opacity:0.4; font-size:13px;">Nothing due today. Take a break.</p>';
-    }
 
-    function exportData() {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(questions));
-        const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "recall_backup.json"); dl.click();
-    }
-
-    function importData(e) {
-        const reader = new FileReader();
-        reader.onload = (event) => { questions = JSON.parse(event.target.result); save(); };
-        reader.readAsText(e.target.files[0]);
+        document.getElementById('stats').innerText = `[ ARCHIVE: ${questions.length} ]`;
+        if (dueList.innerHTML === '') dueList.innerHTML = '<div style="opacity:0.3; font-size:12px; text-align:center; padding:20px;">No reviews due today.</div>';
     }
 
     render();
