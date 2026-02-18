@@ -3,144 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LC / SRS / TRACKER</title>
+    <title>LC_RECALL // BENTO</title>
     <style>
         :root {
-            --bg: #fafafa;
-            --text: #1a1a1a;
-            --accent: #000;
-            --border: #e1e1e1;
-            --star: #ffd700;
+            --bg: #f5f5f2;
+            --text: #2d3436;
+            --border: #2d3436;
+            --accent-sage: #b2bdab;
+            --accent-slate: #d1d8e0;
+            --accent-rose: #e9d1d1;
+            --star-gold: #f1c40f;
+            --card-bg: #ffffff;
         }
 
         body {
-            background: var(--bg);
+            background-color: var(--bg);
             color: var(--text);
-            font-family: 'Inter', -apple-system, monospace;
-            display: flex;
-            justify-content: center;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             padding: 40px 20px;
             margin: 0;
-            line-height: 1.6;
         }
 
-        .container {
-            width: 100%;
-            max-width: 650px;
+        .container { max-width: 900px; margin: auto; }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            grid-template-rows: auto auto;
+            gap: 24px;
         }
 
-        header {
-            margin-bottom: 50px;
-            border-bottom: 2px solid var(--accent);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            padding-bottom: 10px;
+        .block {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 4px 4px 0px var(--border);
         }
 
-        h1 { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.05em; margin: 0; }
-        .date-display { font-size: 0.8rem; font-family: monospace; opacity: 0.5; }
-
-        .input-box {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 40px;
-        }
-
+        .header-block { grid-column: span 2; display: flex; justify-content: space-between; align-items: center; background: var(--accent-slate); }
+        .input-block { grid-column: span 2; }
+        
+        h2 { margin: 0 0 20px 0; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; }
+        
+        .input-group { display: flex; gap: 12px; flex-wrap: wrap; }
         input, select {
-            border: 1px solid var(--border);
-            padding: 10px;
-            background: white;
-            font-size: 0.9rem;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
             outline: none;
-            transition: border 0.2s;
         }
 
-        input:focus { border-color: var(--accent); }
-
-        button {
-            background: var(--accent);
-            color: white;
-            border: none;
+        .btn {
             padding: 10px 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: var(--card-bg);
             cursor: pointer;
-            transition: opacity 0.2s;
+            font-weight: 700;
+            transition: all 0.1s;
         }
 
-        button:hover { opacity: 0.8; }
+        .btn:hover { transform: translate(-2px, -2px); box-shadow: 2px 2px 0px var(--border); }
+        .btn:active { transform: translate(0, 0); box-shadow: 0px 0px 0px var(--border); }
+        .btn-primary { background: var(--accent-sage); }
+        .btn-done { background: var(--accent-sage); width: 100%; }
+        .btn-undo { background: var(--accent-slate); width: 100%; }
+        .btn-del { border: none; background: transparent; color: #a55; font-size: 18px; padding: 0 5px; }
 
-        .section-label {
-            font-size: 0.7rem;
+        .item-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .star { cursor: pointer; font-size: 1.4rem; color: #ddd; transition: 0.2s; }
+        .star.active { color: var(--star-gold); }
+
+        .tag {
+            font-size: 10px;
             font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 15px;
-            display: block;
-            opacity: 0.4;
         }
+        .tag-Easy { background: #e3f9e5; }
+        .tag-Medium { background: #fff4e5; }
+        .tag-Hard { background: #ffe3e3; }
 
-        .list { margin-bottom: 40px; }
-
-        .item {
-            display: flex;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid var(--border);
-            gap: 15px;
-        }
-
-        .item-info { flex-grow: 1; }
-        .item-name { font-size: 0.95rem; font-weight: 500; }
-        .item-meta { font-size: 0.75rem; opacity: 0.5; font-family: monospace; }
-
-        .star { cursor: pointer; font-size: 1.1rem; filter: grayscale(1); }
-        .star.active { filter: grayscale(0); }
-
-        .btn-done { background: #f0f0f0; color: #000; border: 1px solid #ddd; }
-        .btn-undo { background: #000; color: #fff; }
-        .btn-del { background: transparent; color: #ff4444; font-size: 1.2rem; padding: 0 10px; }
-
-        .empty { font-size: 0.8rem; opacity: 0.3; font-style: italic; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
-        <h1>LC_TRACKER.SYS</h1>
-        <div class="date-display" id="currentDate"></div>
-    </header>
+    <div class="bento-grid">
+        <div class="block header-block">
+            <h1 style="margin:0; font-size: 1.4rem;">Recall Tracker</h1>
+            <div id="stats" style="font-family: monospace; font-weight: bold;"></div>
+        </div>
 
-    <div class="input-box">
-        <input type="text" id="qName" placeholder="Question name..." style="flex-grow: 1;">
-        <select id="qDiff">
-            <option value="Easy">EASY</option>
-            <option value="Medium">MEDIUM</option>
-            <option value="Hard">HARD</option>
-        </select>
-        <button onclick="addQuestion()">ADD</button>
+        <div class="block input-block">
+            <h2>Add New Question</h2>
+            <div class="input-group">
+                <input type="text" id="qName" placeholder="Problem title..." style="flex-grow: 1;">
+                <select id="qDiff">
+                    <option value="Easy">Easy</option>
+                    <option value="Medium" selected>Medium</option>
+                    <option value="Hard">Hard</option>
+                </select>
+                <button class="btn btn-primary" onclick="addQuestion()">Add to Grid</button>
+            </div>
+        </div>
+
+        <div class="block">
+            <h2>Today's Focus</h2>
+            <div id="dueList"></div>
+        </div>
+
+        <div class="block" style="background: #fafafa;">
+            <h2>Full Archive</h2>
+            <div id="allList"></div>
+        </div>
     </div>
 
-    <span class="section-label">Due for recall today</span>
-    <div id="dueList" class="list"></div>
-
-    <span class="section-label">System Archive (All)</span>
-    <div id="allList" class="list"></div>
+    <div style="margin-top: 30px; display: flex; gap: 10px; opacity: 0.6;">
+        <button class="btn" onclick="exportData()" style="font-size: 11px;">Export JSON</button>
+        <button class="btn" onclick="document.getElementById('importFile').click()" style="font-size: 11px;">Import JSON</button>
+        <input type="file" id="importFile" style="display:none" onchange="importData(event)">
+    </div>
 </div>
 
 <script>
-    let questions = JSON.parse(localStorage.getItem('min_lc_data')) || [];
-    let lastSolvedState = null; // For Undo
-
-    function updateDate() {
-        const d = new Date();
-        document.getElementById('currentDate').innerText = d.toISOString().split('T')[0];
-    }
+    let questions = JSON.parse(localStorage.getItem('muted_bento_data')) || [];
+    let lastSolved = null;
 
     function save() {
-        localStorage.setItem('min_lc_data', JSON.stringify(questions));
+        localStorage.setItem('muted_bento_data', JSON.stringify(questions));
         render();
     }
 
@@ -148,15 +152,7 @@
         const name = document.getElementById('qName').value;
         const diff = document.getElementById('qDiff').value;
         if(!name) return;
-
-        questions.push({
-            id: Date.now(),
-            name,
-            diff,
-            starred: false,
-            nextReview: new Date().toISOString(),
-            prevReview: null // Store for Undo
-        });
+        questions.push({ id: Date.now(), name, diff, starred: false, nextReview: new Date().toISOString(), prevReview: null });
         document.getElementById('qName').value = '';
         save();
     }
@@ -167,79 +163,73 @@
         save();
     }
 
-    function deleteQuestion(id) {
-        if(confirm('Delete record?')) {
-            questions = questions.filter(q => q.id !== id);
-            save();
-        }
-    }
-
     function markDone(id) {
         const q = questions.find(q => q.id === id);
-        lastSolvedState = { id, prevDate: q.nextReview }; // Store state for undo
-        
+        q.prevReview = q.nextReview;
         const intervals = { 'Easy': 7, 'Medium': 3, 'Hard': 1 };
         const next = new Date();
-        next.setDate(next.getDate() + intervals[q.diff]);
-        
-        q.prevReview = q.nextReview;
+        next.setDate(next.getDate() + (intervals[q.diff] || 1));
         q.nextReview = next.toISOString();
+        lastSolved = id;
         save();
     }
 
     function undo(id) {
         const q = questions.find(q => q.id === id);
-        if(q.prevReview) {
-            q.nextReview = q.prevReview;
-            q.prevReview = null;
-            lastSolvedState = null;
-            save();
-        }
+        if(q.prevReview) { q.nextReview = q.prevReview; q.prevReview = null; lastSolved = null; save(); }
+    }
+
+    function deleteQ(id) {
+        if(confirm('Remove this entry?')) { questions = questions.filter(q => q.id !== id); save(); }
     }
 
     function render() {
         const dueList = document.getElementById('dueList');
         const allList = document.getElementById('allList');
-        dueList.innerHTML = '';
-        allList.innerHTML = '';
-
+        dueList.innerHTML = ''; allList.innerHTML = '';
         const today = new Date().toISOString().split('T')[0];
-
-        if (questions.length === 0) {
-            allList.innerHTML = '<div class="empty">No data found in system.</div>';
-        }
 
         questions.forEach(q => {
             const isDue = q.nextReview.split('T')[0] <= today || q.starred;
-            const isJustSolved = lastSolvedState && lastSolvedState.id === q.id;
-
-            const itemHtml = `
-                <div class="item">
-                    <div class="star ${q.starred ? 'active' : ''}" onclick="toggleStar(${q.id})">★</div>
-                    <div class="item-info">
-                        <div class="item-name">${q.name}</div>
-                        <div class="item-meta">${q.diff.toUpperCase()} / NEXT: ${q.nextReview.split('T')[0]}</div>
+            const cardHtml = `
+                <div class="item-card">
+                    <div class="flex-between">
+                        <span class="tag tag-${q.diff}">${q.diff}</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="star ${q.starred ? 'active' : ''}" onclick="toggleStar(${q.id})">★</span>
+                            <button class="btn-del" onclick="deleteQ(${q.id})">×</button>
+                        </div>
                     </div>
-                    ${isJustSolved ? 
-                        `<button class="btn-undo" onclick="undo(${q.id})">UNDO</button>` : 
-                        `<button class="btn-done" onclick="markDone(${q.id})">DONE</button>`
-                    }
-                    <button class="btn-del" onclick="deleteQuestion(${q.id})">×</button>
+                    <div style="font-weight:600; margin-bottom:12px; font-size: 0.95rem;">${q.name}</div>
+                    <div class="flex-between">
+                        <small style="opacity:0.5; font-size:11px;">Due: ${q.nextReview.split('T')[0]}</small>
+                        <div style="width: 80px;">
+                            ${lastSolved === q.id ? 
+                                `<button class="btn btn-undo" onclick="undo(${q.id})">Undo</button>` : 
+                                `<button class="btn btn-done" onclick="markDone(${q.id})">Done</button>`}
+                        </div>
+                    </div>
                 </div>
             `;
-
-            if(isDue) dueList.innerHTML += itemHtml;
-            allList.innerHTML += itemHtml;
+            if(isDue) dueList.innerHTML += cardHtml;
+            allList.innerHTML += cardHtml;
         });
-
-        if (dueList.innerHTML === '') {
-            dueList.innerHTML = '<div class="empty">System clear. No reviews due.</div>';
-        }
+        document.getElementById('stats').innerText = `Total: ${questions.length}`;
+        if(dueList.innerHTML === '') dueList.innerHTML = '<p style="opacity:0.4; font-size:13px;">Nothing due today. Take a break.</p>';
     }
 
-    updateDate();
+    function exportData() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(questions));
+        const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "recall_backup.json"); dl.click();
+    }
+
+    function importData(e) {
+        const reader = new FileReader();
+        reader.onload = (event) => { questions = JSON.parse(event.target.result); save(); };
+        reader.readAsText(e.target.files[0]);
+    }
+
     render();
 </script>
-
 </body>
 </html>
