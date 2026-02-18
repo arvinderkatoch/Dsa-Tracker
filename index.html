@@ -2,151 +2,244 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>LeetCode SRS Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LC / SRS / TRACKER</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; padding: 20px; color: #333; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h2 { border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
-        button { padding: 10px 20px; cursor: pointer; background: #28a745; color: white; border: none; border-radius: 5px; font-weight: bold; }
-        button:hover { background: #218838; }
-        .star-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #ccc; }
-        .star-btn.active { color: #f1c40f; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
-        .due-today { background: #fff3cd; font-weight: bold; }
-        .difficulty-Easy { color: #28a745; }
-        .difficulty-Medium { color: #fd7e14; }
-        .difficulty-Hard { color: #dc3545; }
+        :root {
+            --bg: #fafafa;
+            --text: #1a1a1a;
+            --accent: #000;
+            --border: #e1e1e1;
+            --star: #ffd700;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, monospace;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+        }
+
+        header {
+            margin-bottom: 50px;
+            border-bottom: 2px solid var(--accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 10px;
+        }
+
+        h1 { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.05em; margin: 0; }
+        .date-display { font-size: 0.8rem; font-family: monospace; opacity: 0.5; }
+
+        .input-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        input, select {
+            border: 1px solid var(--border);
+            padding: 10px;
+            background: white;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        input:focus { border-color: var(--accent); }
+
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover { opacity: 0.8; }
+
+        .section-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 15px;
+            display: block;
+            opacity: 0.4;
+        }
+
+        .list { margin-bottom: 40px; }
+
+        .item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+            gap: 15px;
+        }
+
+        .item-info { flex-grow: 1; }
+        .item-name { font-size: 0.95rem; font-weight: 500; }
+        .item-meta { font-size: 0.75rem; opacity: 0.5; font-family: monospace; }
+
+        .star { cursor: pointer; font-size: 1.1rem; filter: grayscale(1); }
+        .star.active { filter: grayscale(0); }
+
+        .btn-done { background: #f0f0f0; color: #000; border: 1px solid #ddd; }
+        .btn-undo { background: #000; color: #fff; }
+        .btn-del { background: transparent; color: #ff4444; font-size: 1.2rem; padding: 0 10px; }
+
+        .empty { font-size: 0.8rem; opacity: 0.3; font-style: italic; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>🚀 LeetCode Spaced Repetition</h2>
-    
-    <div class="input-group">
-        <input type="text" id="qName" placeholder="Question Name (e.g. Two Sum)" style="flex-grow: 1;">
+    <header>
+        <h1>LC_TRACKER.SYS</h1>
+        <div class="date-display" id="currentDate"></div>
+    </header>
+
+    <div class="input-box">
+        <input type="text" id="qName" placeholder="Question name..." style="flex-grow: 1;">
         <select id="qDiff">
-            <option value="Easy">Easy</option>
-            <option value="Medium">Medium</option>
-            <option value="Hard">Hard</option>
+            <option value="Easy">EASY</option>
+            <option value="Medium">MEDIUM</option>
+            <option value="Hard">HARD</option>
         </select>
-        <button onclick="addQuestion()">Add & Log</button>
+        <button onclick="addQuestion()">ADD</button>
     </div>
 
-    <h3>📅 Due for Review Today</h3>
-    <table id="dueTable">
-        <thead>
-            <tr>
-                <th>Question</th>
-                <th>Difficulty</th>
-                <th>Last Solved</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody id="dueBody"></tbody>
-    </table>
+    <span class="section-label">Due for recall today</span>
+    <div id="dueList" class="list"></div>
 
-    <h3 style="margin-top: 40px;">📚 All Tracked Questions</h3>
-    <table id="allTable">
-        <thead>
-            <tr>
-                <th>Star</th>
-                <th>Question</th>
-                <th>Next Review</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="allBody"></tbody>
-    </table>
+    <span class="section-label">System Archive (All)</span>
+    <div id="allList" class="list"></div>
 </div>
 
 <script>
-    let questions = JSON.parse(localStorage.getItem('lc_data')) || [];
+    let questions = JSON.parse(localStorage.getItem('min_lc_data')) || [];
+    let lastSolvedState = null; // For Undo
+
+    function updateDate() {
+        const d = new Date();
+        document.getElementById('currentDate').innerText = d.toISOString().split('T')[0];
+    }
+
+    function save() {
+        localStorage.setItem('min_lc_data', JSON.stringify(questions));
+        render();
+    }
 
     function addQuestion() {
         const name = document.getElementById('qName').value;
         const diff = document.getElementById('qDiff').value;
         if(!name) return;
 
-        const newQ = {
+        questions.push({
             id: Date.now(),
-            name: name,
-            difficulty: diff,
-            lastDate: new Date().toISOString(),
-            nextDate: calculateNext(new Date(), 1), // Default 1 day for first review
-            isStarred: false,
-            interval: 1
-        };
-
-        questions.push(newQ);
-        saveAndRender();
+            name,
+            diff,
+            starred: false,
+            nextReview: new Date().toISOString(),
+            prevReview: null // Store for Undo
+        });
         document.getElementById('qName').value = '';
-    }
-
-    function calculateNext(date, days) {
-        let result = new Date(date);
-        result.setDate(result.getDate() + days);
-        return result.toISOString();
-    }
-
-    function solveAgain(id, difficulty) {
-        const q = questions.find(q => q.id === id);
-        q.lastDate = new Date().toISOString();
-        
-        // SRS Logic
-        if (difficulty === 'Easy') q.interval = 7;
-        else if (difficulty === 'Medium') q.interval = 3;
-        else q.interval = 1;
-
-        q.nextDate = calculateNext(new Date(), q.interval);
-        saveAndRender();
+        save();
     }
 
     function toggleStar(id) {
         const q = questions.find(q => q.id === id);
-        q.isStarred = !q.isStarred;
-        saveAndRender();
+        q.starred = !q.starred;
+        save();
     }
 
-    function saveAndRender() {
-        localStorage.setItem('lc_data', JSON.stringify(questions));
-        render();
+    function deleteQuestion(id) {
+        if(confirm('Delete record?')) {
+            questions = questions.filter(q => q.id !== id);
+            save();
+        }
+    }
+
+    function markDone(id) {
+        const q = questions.find(q => q.id === id);
+        lastSolvedState = { id, prevDate: q.nextReview }; // Store state for undo
+        
+        const intervals = { 'Easy': 7, 'Medium': 3, 'Hard': 1 };
+        const next = new Date();
+        next.setDate(next.getDate() + intervals[q.diff]);
+        
+        q.prevReview = q.nextReview;
+        q.nextReview = next.toISOString();
+        save();
+    }
+
+    function undo(id) {
+        const q = questions.find(q => q.id === id);
+        if(q.prevReview) {
+            q.nextReview = q.prevReview;
+            q.prevReview = null;
+            lastSolvedState = null;
+            save();
+        }
     }
 
     function render() {
-        const dueBody = document.getElementById('dueBody');
-        const allBody = document.getElementById('allBody');
-        dueBody.innerHTML = '';
-        allBody.innerHTML = '';
+        const dueList = document.getElementById('dueList');
+        const allList = document.getElementById('allList');
+        dueList.innerHTML = '';
+        allList.innerHTML = '';
 
         const today = new Date().toISOString().split('T')[0];
 
-        questions.forEach(q => {
-            const nextReviewDate = q.nextDate.split('T')[0];
-            const isDue = nextReviewDate <= today || q.isStarred;
+        if (questions.length === 0) {
+            allList.innerHTML = '<div class="empty">No data found in system.</div>';
+        }
 
-            const rowHtml = `
-                <td><button class="star-btn ${q.isStarred ? 'active' : ''}" onclick="toggleStar(${q.id})">★</button></td>
-                <td>${q.name} <span class="difficulty-${q.difficulty}">(${q.difficulty})</span></td>
-                <td>${nextReviewDate}</td>
-                <td><button onclick="solveAgain(${q.id}, '${q.difficulty}')" style="background:#007bff">Done Today</button></td>
+        questions.forEach(q => {
+            const isDue = q.nextReview.split('T')[0] <= today || q.starred;
+            const isJustSolved = lastSolvedState && lastSolvedState.id === q.id;
+
+            const itemHtml = `
+                <div class="item">
+                    <div class="star ${q.starred ? 'active' : ''}" onclick="toggleStar(${q.id})">★</div>
+                    <div class="item-info">
+                        <div class="item-name">${q.name}</div>
+                        <div class="item-meta">${q.diff.toUpperCase()} / NEXT: ${q.nextReview.split('T')[0]}</div>
+                    </div>
+                    ${isJustSolved ? 
+                        `<button class="btn-undo" onclick="undo(${q.id})">UNDO</button>` : 
+                        `<button class="btn-done" onclick="markDone(${q.id})">DONE</button>`
+                    }
+                    <button class="btn-del" onclick="deleteQuestion(${q.id})">×</button>
+                </div>
             `;
 
-            if (isDue) {
-                const dueRow = dueBody.insertRow();
-                dueRow.className = 'due-today';
-                dueRow.innerHTML = rowHtml.replace('<td><button class="star-btn', '<td>' + (q.isStarred ? '⚠️ ' : '') + '<button class="star-btn');
-            }
-
-            const allRow = allBody.insertRow();
-            allRow.innerHTML = rowHtml;
+            if(isDue) dueList.innerHTML += itemHtml;
+            allList.innerHTML += itemHtml;
         });
+
+        if (dueList.innerHTML === '') {
+            dueList.innerHTML = '<div class="empty">System clear. No reviews due.</div>';
+        }
     }
 
+    updateDate();
     render();
 </script>
+
 </body>
 </html>
