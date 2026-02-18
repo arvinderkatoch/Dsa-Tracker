@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LeetCode SRS Tracker</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        button { padding: 10px 20px; cursor: pointer; background: #28a745; color: white; border: none; border-radius: 5px; font-weight: bold; }
+        button:hover { background: #218838; }
+        .star-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #ccc; }
+        .star-btn.active { color: #f1c40f; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
+        .due-today { background: #fff3cd; font-weight: bold; }
+        .difficulty-Easy { color: #28a745; }
+        .difficulty-Medium { color: #fd7e14; }
+        .difficulty-Hard { color: #dc3545; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🚀 LeetCode Spaced Repetition</h2>
+    
+    <div class="input-group">
+        <input type="text" id="qName" placeholder="Question Name (e.g. Two Sum)" style="flex-grow: 1;">
+        <select id="qDiff">
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+        </select>
+        <button onclick="addQuestion()">Add & Log</button>
+    </div>
+
+    <h3>📅 Due for Review Today</h3>
+    <table id="dueTable">
+        <thead>
+            <tr>
+                <th>Question</th>
+                <th>Difficulty</th>
+                <th>Last Solved</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="dueBody"></tbody>
+    </table>
+
+    <h3 style="margin-top: 40px;">📚 All Tracked Questions</h3>
+    <table id="allTable">
+        <thead>
+            <tr>
+                <th>Star</th>
+                <th>Question</th>
+                <th>Next Review</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="allBody"></tbody>
+    </table>
+</div>
+
+<script>
+    let questions = JSON.parse(localStorage.getItem('lc_data')) || [];
+
+    function addQuestion() {
+        const name = document.getElementById('qName').value;
+        const diff = document.getElementById('qDiff').value;
+        if(!name) return;
+
+        const newQ = {
+            id: Date.now(),
+            name: name,
+            difficulty: diff,
+            lastDate: new Date().toISOString(),
+            nextDate: calculateNext(new Date(), 1), // Default 1 day for first review
+            isStarred: false,
+            interval: 1
+        };
+
+        questions.push(newQ);
+        saveAndRender();
+        document.getElementById('qName').value = '';
+    }
+
+    function calculateNext(date, days) {
+        let result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result.toISOString();
+    }
+
+    function solveAgain(id, difficulty) {
+        const q = questions.find(q => q.id === id);
+        q.lastDate = new Date().toISOString();
+        
+        // SRS Logic
+        if (difficulty === 'Easy') q.interval = 7;
+        else if (difficulty === 'Medium') q.interval = 3;
+        else q.interval = 1;
+
+        q.nextDate = calculateNext(new Date(), q.interval);
+        saveAndRender();
+    }
+
+    function toggleStar(id) {
+        const q = questions.find(q => q.id === id);
+        q.isStarred = !q.isStarred;
+        saveAndRender();
+    }
+
+    function saveAndRender() {
+        localStorage.setItem('lc_data', JSON.stringify(questions));
+        render();
+    }
+
+    function render() {
+        const dueBody = document.getElementById('dueBody');
+        const allBody = document.getElementById('allBody');
+        dueBody.innerHTML = '';
+        allBody.innerHTML = '';
+
+        const today = new Date().toISOString().split('T')[0];
+
+        questions.forEach(q => {
+            const nextReviewDate = q.nextDate.split('T')[0];
+            const isDue = nextReviewDate <= today || q.isStarred;
+
+            const rowHtml = `
+                <td><button class="star-btn ${q.isStarred ? 'active' : ''}" onclick="toggleStar(${q.id})">★</button></td>
+                <td>${q.name} <span class="difficulty-${q.difficulty}">(${q.difficulty})</span></td>
+                <td>${nextReviewDate}</td>
+                <td><button onclick="solveAgain(${q.id}, '${q.difficulty}')" style="background:#007bff">Done Today</button></td>
+            `;
+
+            if (isDue) {
+                const dueRow = dueBody.insertRow();
+                dueRow.className = 'due-today';
+                dueRow.innerHTML = rowHtml.replace('<td><button class="star-btn', '<td>' + (q.isStarred ? '⚠️ ' : '') + '<button class="star-btn');
+            }
+
+            const allRow = allBody.insertRow();
+            allRow.innerHTML = rowHtml;
+        });
+    }
+
+    render();
+</script>
+</body>
+</html>
